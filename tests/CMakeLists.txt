@@ -1,0 +1,7 @@
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_BOOST_THREAD")
+include_directories(${CMAKE_SOURCE_DIR}/tpls/qlm/qat/comm)
+link_directories(/opt/qat/stable/lib64)
+add_xacc_test(ATOSAccelerator)
+target_link_libraries(ATOSAcceleratorTester qatqpu xacc-atos-accelerator)
+add_xacc_test(ATOSVisitor)
+target_link_libraries(ATOSVisitorTester qatqpu)

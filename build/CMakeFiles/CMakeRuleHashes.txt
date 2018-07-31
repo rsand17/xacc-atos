@@ -1,0 +1,3 @@
+# Hashes of file build rules.
+2b25cbfabb50a132b08d3588b89667d5 accelerator/xacc-atos-accelerator/cppmicroservices_resources.cpp
+792b6c0d950b9915e2cf8e29f8874c8d accelerator/xacc-atos-accelerator/res_0.zip

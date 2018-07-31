@@ -1,0 +1,6 @@
+{
+  "bundle.symbolic_name" : "xacc_atos_accelerator",
+  "bundle.activator" : true,
+  "bundle.name" : "XACC ATOS accelerator", 
+  "bundle.description" : "This bundle provides an Accelerator targeting the Atos QLM"
+}
