@@ -27,6 +27,8 @@ include_directories(${CMAKE_BINARY_DIR})
 
 include_directories(${XACC_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/utils)
+include_directories(/opt/qat/dev/include/qat/comm)
+link_directories(/opt/qat/dev/lib64)
 
 link_directories(${XACC_LIBRARY_DIR})
 

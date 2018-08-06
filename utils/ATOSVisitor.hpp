@@ -91,100 +91,120 @@ protected:
 
 	std::vector<int> measuredQubits;
 
-	//bool includeMeasures = true;
+	int numAddresses;
 
-	int numAddresses = 0;
-        
-	//GateDictionary gateDictionary;
+	int nbCbits = 0;
+	std::vector<Op> ops;        
+	GateDictionary gateDictionary;
 
 public:
 
 	ATOSVisitor() {
-	  circuit.nbqbits = 1;
-	  circuit.nbcbits = 1;
-          //circuit.gateDic = gateDictionary;
           ComplexNumber comNum;
           ComplexNumber realOne;
           ComplexNumber realZero;
           ComplexNumber iOne;
-          realOne.re = 1;
-          realZero.re = 0;
-          iOne.re = 0;
-          iOne.im = 1;
+          realOne.__set_re(1);
+          realZero.__set_re(0);
+          iOne.__set_re(0);
+          iOne.__set_im(1);
 
           GateDefinition h;
-          h.matrix.nRows = 2;
-          h.matrix.nCols = 2;
-          comNum.re = 1 / sqrt(2);
-          h.matrix.data.push_back(comNum);
-          h.matrix.data.push_back(comNum);
-          h.matrix.data.push_back(comNum);
-          comNum.re = -1 / sqrt(2);
-          h.matrix.data.push_back(comNum);
-          h.arity = 1;
-          h.name = "H";
-          circuit.gateDic.insert({"H", h});
-	  //std::cout << "Thank you for creating the hadamard gate!\nMatrix arity: " << circuit.gateDic["H"].arity << std::endl;
-
+	  std::vector<ComplexNumber> datah;
+	  Matrix mh;
+          mh.__set_nRows(2);
+          mh.__set_nCols(2);
+          comNum.__set_re(1 / sqrt(2));
+          datah.push_back(comNum);
+          datah.push_back(comNum);
+          datah.push_back(comNum);
+          comNum.__set_re(-1 / sqrt(2));
+          datah.push_back(comNum);
+	  mh.__set_data(datah);
+	  h.__set_matrix(mh);
+          h.__set_arity(1);
+          h.__set_name("H");
+	  gateDictionary.insert({"H", h});
+	  
           GateDefinition i;
-          i.matrix.nRows = 2;
-          i.matrix.nCols = 2;
-          i.matrix.data.push_back(realOne);
-          i.matrix.data.push_back(realZero);
-          i.matrix.data.push_back(realZero);
-          i.matrix.data.push_back(realOne);
-          i.arity = 1;
-          i.name = "I";
+	  std::vector<ComplexNumber> datai;
+	  Matrix mi;
+          mi.__set_nRows(2);
+          mi.__set_nCols(2);
+          datai.push_back(realOne);
+          datai.push_back(realZero);
+          datai.push_back(realZero);
+          datai.push_back(realOne);
+	  mi.__set_data(datai);
+	  i.__set_matrix(mi);
+          i.__set_arity(1);
+          i.__set_name("I");
           circuit.gateDic.insert({"I", i});
-
+	  
           GateDefinition x;
-          x.matrix.nRows = 2;
-          x.matrix.nCols = 2;
-          x.matrix.data.push_back(realZero);
-          x.matrix.data.push_back(realOne);
-          x.matrix.data.push_back(realOne);
-          x.matrix.data.push_back(realZero);
-          x.arity = 1;
-          x.name = "X";
-          circuit.gateDic.insert({"X", x});
+	  std::vector<ComplexNumber> datax;
+          Matrix mx;
+          mx.__set_nRows(2);
+          mx.__set_nCols(2);
+          datax.push_back(realZero);
+          datax.push_back(realOne);
+          datax.push_back(realOne);
+          datax.push_back(realZero);
+	  mx.__set_data(datax);
+	  x.__set_matrix(mx);
+          x.__set_arity(1);
+          x.__set_name("X");
+          gateDictionary.insert({"X", x});
 
 	  GateDefinition y;
-          y.matrix.nRows = 2;
-          y.matrix.nCols = 2;
-          y.matrix.data.push_back(realZero);
-          iOne.im = -1;
-          y.matrix.data.push_back(iOne);
-          iOne.im = 1;
-          y.matrix.data.push_back(iOne);
-          y.matrix.data.push_back(realZero);
-          y.arity = 1;
-          y.name = "Y";
+	  std::vector<ComplexNumber> datay;
+	  Matrix my;
+          my.__set_nRows(2);
+          my.__set_nCols(2);
+          datay.push_back(realZero);
+          iOne.__set_im(-1);
+          datay.push_back(iOne);
+          iOne.__set_im(1);
+          datay.push_back(iOne);
+          datay.push_back(realZero);
+	  my.__set_data(datay);
+	  y.__set_matrix(my);
+          y.__set_arity(1);
+          y.__set_name("Y");
           circuit.gateDic.insert({"Y", y});
 
           GateDefinition z;
-          z.matrix.nRows = 2;
-          z.matrix.nCols = 2;
-          z.matrix.data.push_back(realOne);
-          z.matrix.data.push_back(realZero);
-          z.matrix.data.push_back(realZero);
-          realOne.re = -1;
-          z.matrix.data.push_back(realOne);
-          realOne.re = 1;
-          z.arity = 1;
-          z.name = "Z";
+	  std::vector<ComplexNumber> dataz;
+	  Matrix mz;
+          mz.__set_nRows(2);
+          mz.__set_nCols(2);
+          dataz.push_back(realOne);
+          dataz.push_back(realZero);
+          dataz.push_back(realZero);
+          realOne.__set_re(-1);
+          dataz.push_back(realOne);
+          realOne.__set_re(1);
+	  mz.__set_data(dataz);
+	  z.__set_matrix(mz);
+          z.__set_arity(1);
+          z.__set_name("Z");
           circuit.gateDic.insert({"Z", z});
-/*
-          GateDefinition s;
-          s.matrix.nRows = 2;
-          s.matrix.nCols = 2;
-          s.matrix.data.push_back(realOne);
-          s.matrix.data.push_back(realZero);
-          s.matrix.data.push_back(realZero);
-          s.matrix.data.push_back(iOne);
-          s.arity = 1;
-          s.name = "S";
-          circuit.gateDic.insert({"S", s});
 
+          GateDefinition s;
+	  std::vector<ComplexNumber> datas;
+	  Matrix ms;
+          ms.__set_nRows(2);
+          ms.__set_nCols(2);
+          datas.push_back(realOne);
+          datas.push_back(realZero);
+          datas.push_back(realZero);
+          datas.push_back(iOne);
+	  ms.__set_data(datas);
+	  s.__set_matrix(ms);
+          s.__set_arity(1);
+          s.__set_name("S");
+          circuit.gateDic.insert({"S", s});
+/*
           Matrix tee;
           tee.nRows = 2;
           tee.nCols = 2
@@ -199,99 +219,104 @@ public:
           t.name = "T"
           gateDictionary.insert({"T", t});
 */
-
 	  GateDefinition cnot;
-          cnot.matrix.nRows = 4;
-          cnot.matrix.nCols = 4;
-          cnot.matrix.data.push_back(realOne);
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realZero);
+	  std::vector<ComplexNumber> datacn;
+	  Matrix mcn;
+          mcn.__set_nRows(4);
+          mcn.__set_nCols(4);
+          datacn.push_back(realOne);
+          datacn.push_back(realZero);
+          datacn.push_back(realZero);
+          datacn.push_back(realZero);
 
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realOne);
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realZero);
+          datacn.push_back(realZero);
+          datacn.push_back(realOne);
+          datacn.push_back(realZero);
+          datacn.push_back(realZero);
 
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realOne);
+          datacn.push_back(realZero);
+          datacn.push_back(realZero);
+          datacn.push_back(realZero);
+          datacn.push_back(realOne);
 
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realZero);
-          cnot.matrix.data.push_back(realOne);
-          cnot.matrix.data.push_back(realZero);
-          cnot.arity = 2;
-          cnot.name = "CNOT";
+          datacn.push_back(realZero);
+          datacn.push_back(realZero);
+          datacn.push_back(realOne);
+          datacn.push_back(realZero);
+	  mcn.__set_data(datacn);
+	  cnot.__set_matrix(mcn);
+          cnot.__set_arity(2);
+          cnot.__set_name("CNOT");
           circuit.gateDic.insert({"CNOT", cnot});
 
-	  /*for(int i = 0; i < 16; i++) {
-	    std::cout << cnot.matrix.data[i].re << " ";
-	    if(i == 3 || i == 7 || i == 11 || i == 15) {
-	      std::cout << std::endl;
-	    }
-	  }
-	  std::cout << std::endl;
-
-	  for (auto& x: gateDictionary) {
-    	    std::cout << x.first << ": " << x.second << '\n';
-  	  }
-	  */
-
 	  GateDefinition cz;
+	  std::vector<ComplexNumber> datacz;
+          Matrix mcz;
           cz.matrix.nRows = 4;
           cz.matrix.nCols = 4;
-          cz.matrix.data.push_back(realOne);
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realZero);
+	  datacz.push_back(realOne);
+          datacz.push_back(realZero);
+          datacz.push_back(realZero);
+          datacz.push_back(realZero);
 
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realOne);
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realZero);
+          datacz.push_back(realZero);
+          datacz.push_back(realOne);
+          datacz.push_back(realZero);
+          datacz.push_back(realZero);
 
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realOne);
-          cz.matrix.data.push_back(realZero);
+          datacz.push_back(realZero);
+          datacz.push_back(realZero);
+          datacz.push_back(realOne);
+          datacz.push_back(realZero);
 
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realZero);
-          cz.matrix.data.push_back(realZero);
-          realOne.re = -1;
-          cz.matrix.data.push_back(realOne);
-          realOne.re = 1;
-          cz.arity = 2;
-          cz.name = "CSIGN";
+          datacz.push_back(realZero);
+          datacz.push_back(realZero);
+          datacz.push_back(realZero);
+          realOne.__set_re(-1);
+          datacz.push_back(realOne);
+          realOne.__set_re(1);
+	  mcz.__set_data(datacz);
+	  cz.__set_matrix(mcz);
+          cz.__set_arity(2);
+          cz.__set_name("CSIGN");
           circuit.gateDic.insert({"CSIGN", cz});
 
 	  GateDefinition swap;
-          swap.matrix.nRows = 4;
-          swap.matrix.nCols = 4;
-          swap.matrix.data.push_back(realOne);
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realZero);
+	  std::vector<ComplexNumber> datasw;
+          Matrix msw;
+          msw.__set_nRows(4);
+          msw.__set_nCols(4);
+          datasw.push_back(realOne);
+          datasw.push_back(realZero);
+          datasw.push_back(realZero);
+          datasw.push_back(realZero);
 
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realOne);
-          swap.matrix.data.push_back(realZero);
+          datasw.push_back(realZero);
+          datasw.push_back(realZero);
+          datasw.push_back(realOne);
+          datasw.push_back(realZero);
 
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realOne);
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realZero);
+          datasw.push_back(realZero);
+          datasw.push_back(realOne);
+          datasw.push_back(realZero);
+          datasw.push_back(realZero);
 
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realZero);
-          swap.matrix.data.push_back(realOne);
-          swap.arity = 2;
-          swap.name = "SWAP";
+          datasw.push_back(realZero);
+          datasw.push_back(realZero);
+          datasw.push_back(realZero);
+          datasw.push_back(realOne);
+	  msw.__set_data(datasw);
+	  swap.__set_matrix(msw);
+          swap.__set_arity(2);
+          swap.__set_name("SWAP");
           circuit.gateDic.insert({"SWAP", swap});
+	  
+	  GateDefinition meas;
+	  meas.__set_arity(1);
+	  meas.__set_name("MEAS");
+	  gateDictionary.insert({"MEAS", meas});
+
+	  circuit.__set_gateDic(gateDictionary);
 	}
 	//add gateDic
 
@@ -300,25 +325,34 @@ public:
 	 */
 	void visit(Hadamard& h) {
 	  datamodel::Op op;
-          op.gate = "H";
-          op.qbits.push_back(h.bits()[0]);
-          circuit.ops.push_back(op);
+	  std::vector<QbitId> qbitsh;
+          qbitsh.push_back(h.bits()[0]);
+          op.__set_gate("H");
+	  op.__set_qbits(qbitsh);
+          ops.push_back(op);
+	  circuit.__set_ops(ops);
 	  //std::cout << "Thank you for visiting the hadamard gate!\nMatrix size: " << circuit.gateDic["H"].matrix.data.size() << std::endl;
 	}
 
 	void visit(Identity& i) {
 	  datamodel::Op op;
-          op.gate = "I";
-          op.qbits.push_back(i.bits()[0]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitsi;
+          qbitsi.push_back(i.bits()[0]);
+          op.__set_gate("I");
+          op.__set_qbits(qbitsi);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	void visit(CZ& cz) {
 	  datamodel::Op op;
-          op.gate = "CSIGN";
-          op.qbits.push_back(cz.bits()[0]);
-          op.qbits.push_back(cz.bits()[1]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitscz;
+          qbitscz.push_back(cz.bits()[0]);
+	  qbitscz.push_back(cz.bits()[1]);
+          op.__set_gate("CSIGN");
+          op.__set_qbits(qbitscz);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	/**
@@ -326,19 +360,26 @@ public:
 	 */
 	void visit(CNOT& cn) {
 	  datamodel::Op op;
-          op.gate = "CNOT";
-          op.qbits.push_back(cn.bits()[0]);
-	  op.qbits.push_back(cn.bits()[1]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitscn;
+          qbitscn.push_back(cn.bits()[0]);
+          qbitscn.push_back(cn.bits()[1]);
+          op.__set_gate("CNOT");
+          op.__set_qbits(qbitscn);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
+
 	/**
 	 * Visit X gates
 	 */
 	void visit(X& x) {
 	  datamodel::Op op;
-          op.gate = "X";
-          op.qbits.push_back(x.bits()[0]);
-          circuit.ops.push_back(op);
+	  std::vector<QbitId> qbitsx;
+	  qbitsx.push_back(x.bits()[0]);
+          op.__set_gate("X");
+          op.__set_qbits(qbitsx);
+	  ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	/**
@@ -346,9 +387,12 @@ public:
 	 */
 	void visit(Y& y) {
 	  datamodel::Op op;
-          op.gate = "Y";
-          op.qbits.push_back(y.bits()[0]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitsy;
+          qbitsy.push_back(y.bits()[0]);
+          op.__set_gate("Y");
+          op.__set_qbits(qbitsy);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	/**
@@ -356,9 +400,12 @@ public:
 	 */
 	void visit(Z& z) {
 	  datamodel::Op op;
-          op.gate = "Z";
-          op.qbits.push_back(z.bits()[0]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitsz;
+          qbitsz.push_back(z.bits()[0]);
+          op.__set_gate("Z");
+          op.__set_qbits(qbitsz);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	/**
@@ -366,11 +413,18 @@ public:
 	 */
 	void visit(Measure& m) {
 	  datamodel::Op op;
-          op.gate = "MEAS";
-	  op.type = datamodel::OpType::MEASURE;
-          op.qbits.push_back(m.bits()[0]);
-	  op.cbits.push_back(m.getClassicalBitIndex());
-          circuit.ops.push_back(op);
+          op.__set_gate("MEAS");
+	  op.__set_type(datamodel::OpType::MEASURE);
+	  std::vector<QbitId> qbitsm;
+          qbitsm.push_back(m.bits()[0]);
+	  op.__set_qbits(qbitsm);
+	  std::vector<CbitId> cbitsm;
+	  cbitsm.push_back(m.getClassicalBitIndex());
+	  op.__set_cbits(cbitsm);
+	  ops.push_back(op);
+          circuit.__set_ops(ops);
+	  nbCbits++;
+	  circuit.__set_nbcbits(nbCbits);  
 	}
 	/**
 	 * Visit Conditional functions
@@ -381,82 +435,95 @@ public:
 	void visit(Rx& rx) {
 	  auto angleStr = boost::lexical_cast<std::string>(rx.getParameter(0));
 
-          GateDefinition rx1;
-          rx1.matrix.nRows = 2;
-          rx1.matrix.nCols = 2;
+          GateDefinition rotx;
+	  std::vector<ComplexNumber> datarx;
+	  Matrix mrx;
+          mrx.__set_nRows(2);
+          mrx.__set_nCols(2);
           ComplexNumber iOne, realOne;
-          iOne.im = -sin(boost::get<double>(rx.getParameter(0)) / 2);
-          iOne.re = 0;
-          realOne.re = cos(boost::get<double>(rx.getParameter(0)) / 2);
-          rx1.matrix.data.push_back(realOne);
-          rx1.matrix.data.push_back(iOne);
-          rx1.matrix.data.push_back(iOne);
-          rx1.matrix.data.push_back(realOne);
-          rx1.arity = 1;
-          rx1.name = "Rx_" + angleStr;
-          circuit.gateDic.insert({"Rx_" + angleStr, rx1});
-
-	  /*for(int i = 0; i < 4; i++) {
-            std::cout << rx1.matrix.data[i].re << " ";
-            if(i == 1 || i == 3) {
-              std::cout << std::endl;
-            }
-          }
-          std::cout << std::endl;*/
+          iOne.__set_im(-sin(boost::get<double>(rx.getParameter(0)) / 2));
+          iOne.__set_re(0);
+          realOne.__set_re(cos(boost::get<double>(rx.getParameter(0)) / 2));
+          datarx.push_back(realOne);
+          datarx.push_back(iOne);
+          datarx.push_back(iOne);
+          datarx.push_back(realOne);
+	  mrx.__set_data(datarx);
+	  rotx.__set_matrix(mrx);
+          rotx.__set_arity(1);
+          rotx.__set_name("Rx_" + angleStr);
+          circuit.gateDic.insert({"Rx_" + angleStr, rotx});
 
           datamodel::Op op;
-          op.gate = "RX[" + angleStr + "]";
-          op.qbits.push_back(rx.bits()[0]);
-          circuit.ops.push_back(op);
+	  std::vector<QbitId> qbitsrx;
+	  qbitsrx.push_back(rx.bits()[0]);
+          op.__set_gate("RX[" + angleStr + "]");
+	  op.__set_qbits(qbitsrx);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	void visit(Ry& ry) {
 	  auto angleStr = boost::lexical_cast<std::string>(ry.getParameter(0));
 
-          GateDefinition ry1;
-          ry1.matrix.nRows = 2;
-          ry1.matrix.nCols = 2;
+          GateDefinition roty;
+	  std::vector<ComplexNumber> datary;
+	  Matrix mry;
+          mry.__set_nRows(2);
+          mry.__set_nCols(2);
           ComplexNumber realSin, realCos;
-          realSin.re = -sin(boost::get<double>(ry.getParameter(0)) / 2);
-          realCos.re = cos(boost::get<double>(ry.getParameter(0)) / 2);
-          ry1.matrix.data.push_back(realCos);
-          ry1.matrix.data.push_back(realSin);
-          realSin.re = sin(boost::get<double>(ry.getParameter(0)) / 2);
-          ry1.matrix.data.push_back(realSin);
-          ry1.matrix.data.push_back(realCos);
-          ry1.arity = 1;
-          ry1.name = "Ry_" + angleStr;
-          circuit.gateDic.insert({"Ry_" + angleStr, ry1});
+          realSin.__set_re(-sin(boost::get<double>(ry.getParameter(0)) / 2));
+          realCos.__set_re(cos(boost::get<double>(ry.getParameter(0)) / 2));
+          datary.push_back(realCos);
+          datary.push_back(realSin);
+          realSin.__set_re(sin(boost::get<double>(ry.getParameter(0)) / 2));
+          datary.push_back(realSin);
+          datary.push_back(realCos);
+	  mry.__set_data(datary);
+	  roty.__set_matrix(mry);
+          roty.__set_arity(1);
+          roty.__set_name("Ry_" + angleStr);
+          circuit.gateDic.insert({"Ry_" + angleStr, roty});
 
-          datamodel::Op op;
-          op.gate = "RY[" + angleStr + "]";
-          op.qbits.push_back(ry.bits()[0]);
-          circuit.ops.push_back(op);
+	  datamodel::Op op;
+          std::vector<QbitId> qbitsry;
+          qbitsry.push_back(ry.bits()[0]);
+          op.__set_gate("RY[" + angleStr + "]");
+          op.__set_qbits(qbitsry);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	void visit(Rz& rz) {
 	  auto angleStr = boost::lexical_cast<std::string>(rz.getParameter(0));
 
-          GateDefinition rz1;
-          rz1.matrix.nRows = 2;
-          rz1.matrix.nCols = 2;
+          GateDefinition rotz;
+	  std::vector<ComplexNumber> datarz;
+          Matrix mrz;
+          mrz.__set_nRows(2);
+          mrz.__set_nCols(2);
           ComplexNumber iOne, realZero;
-          iOne.im = sin(boost::get<double>(rz.getParameter(0)) / 2);
-          iOne.re = cos(boost::get<double>(rz.getParameter(0)) / 2);
-          realZero.re = 0;
-          rz1.matrix.data.push_back(iOne);
-          rz1.matrix.data.push_back(realZero);
-          rz1.matrix.data.push_back(realZero);
-          iOne.im = -cos(boost::get<double>(rz.getParameter(0)) / 2);
-          rz1.matrix.data.push_back(iOne);
-          rz1.arity = 1;
-          rz1.name = "Ry_" + angleStr;
-          circuit.gateDic.insert({"Rz_" + angleStr, rz1});
+          iOne.__set_im(sin(boost::get<double>(rz.getParameter(0)) / 2));
+          iOne.__set_re(cos(boost::get<double>(rz.getParameter(0)) / 2));
+          realZero.__set_re(0);
+          datarz.push_back(iOne);
+          datarz.push_back(realZero);
+          datarz.push_back(realZero);
+          iOne.__set_im(-cos(boost::get<double>(rz.getParameter(0)) / 2));
+          datarz.push_back(iOne);
+	  mrz.__set_data(datarz);
+	  rotz.__set_matrix(mrz);
+          rotz.__set_arity(1);
+          rotz.__set_name("Ry_" + angleStr);
+          circuit.gateDic.insert({"Rz_" + angleStr, rotz});
 
           datamodel::Op op;
-          op.gate = "RZ[" + angleStr + "]";
-          op.qbits.push_back(rz.bits()[0]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitsrz;
+          qbitsrz.push_back(rz.bits()[0]);
+          op.__set_gate("RZ[" + angleStr + "]");
+          op.__set_qbits(qbitsrz);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	void visit(CPhase& cp) {
@@ -468,10 +535,13 @@ public:
 
 	void visit(Swap& s) {
 	  datamodel::Op op;
-          op.gate = "SWAP";
-          op.qbits.push_back(s.bits()[0]);
-          op.qbits.push_back(s.bits()[1]);
-          circuit.ops.push_back(op);
+          std::vector<QbitId> qbitssw;
+          qbitssw.push_back(s.bits()[0]);
+          qbitssw.push_back(s.bits()[1]);
+          op.__set_gate("SWAP");
+          op.__set_qbits(qbitssw);
+          ops.push_back(op);
+          circuit.__set_ops(ops);
 	}
 
 	void visit(GateFunction& f) {

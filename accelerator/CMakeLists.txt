@@ -10,9 +10,6 @@ usFunctionGetResourceSource(TARGET ${LIBRARY_NAME} OUT SRC)
 # Generate bundle initialization code
 usFunctionGenerateBundleInit(TARGET ${LIBRARY_NAME} OUT SRC)
 
-include_directories(${CMAKE_SOURCE_DIR}/tpls/qlm/qat/comm)
-link_directories(/opt/qat/stable/lib64)
-
 add_library(${LIBRARY_NAME} SHARED ${SRC})
 
 set(_bundle_name xacc_atos_accelerator) 
@@ -33,7 +30,7 @@ usFunctionEmbedResources(TARGET ${LIBRARY_NAME}
     manifest.json
   )
 
-target_link_libraries(${LIBRARY_NAME} ${XACC_LIBRARIES})
+target_link_libraries(${LIBRARY_NAME} ${XACC_LIBRARIES} qatcore qatqpu)
 if(APPLE)
    set_target_properties(${LIBRARY_NAME} PROPERTIES INSTALL_RPATH "@loader_path/../lib")
    set_target_properties(${LIBRARY_NAME} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")

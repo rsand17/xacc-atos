@@ -51,6 +51,7 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
 	auto x = std::make_shared<X>(0);
 	expect.push_back("X");
 	expectb.push_back(0);
+/*
 	auto y = std::make_shared<Y>(0);
 	expect.push_back("Y");
 	expectb.push_back(0);
@@ -60,9 +61,11 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
 	auto i = std::make_shared<Identity>(0);
 	expect.push_back("I");
 	expectb.push_back(0);
+*/
 	auto h = std::make_shared<Hadamard>(0);
 	expect.push_back("H");
 	expectb.push_back(0);
+/*
 	auto cn1 = std::make_shared<CNOT>(1, 2);
 	expect.push_back("CNOT");
 	expectb.push_back(0);
@@ -90,10 +93,11 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
 	auto cz2 = std::make_shared<CZ>(0, 1);
 	expect.push_back("CSIGN");
 	//auto s = std::make_shared<CPhase>(0);
+*/
 	auto m0 = std::make_shared<Measure>(0, 0);
 	expect.push_back("MEAS");
-	auto m1 = std::make_shared<Measure>(1,1);
-	expect.push_back("MEAS");
+//	auto m1 = std::make_shared<Measure>(1,1);
+//	expect.push_back("MEAS");
 
 	//auto cond1 = std::make_shared<ConditionalFunction>(0);
 	//auto z = std::make_shared<Z>(2);
@@ -103,23 +107,23 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
 	//cond2->addInstruction(x2);
 
 	f->addInstruction(x);
-	f->addInstruction(y);
-	f->addInstruction(z);
-	f->addInstruction(i);
+//	f->addInstruction(y);
+//	f->addInstruction(z);
+//	f->addInstruction(i);
 	f->addInstruction(h);
-	f->addInstruction(cn1);
-	f->addInstruction(cn2);
-	f->addInstruction(h2);
-	f->addInstruction(rx);
-	f->addInstruction(ry);
-	f->addInstruction(rz);
-	f->addInstruction(swap1);
-	f->addInstruction(swap2);
-	f->addInstruction(cz1);
-	f->addInstruction(cz2);
+//	f->addInstruction(cn1);
+//	f->addInstruction(cn2);
+//	f->addInstruction(h2);
+//	f->addInstruction(rx);
+//	f->addInstruction(ry);
+//	f->addInstruction(rz);
+//	f->addInstruction(swap1);
+//	f->addInstruction(swap2);
+//	f->addInstruction(cz1);
+//	f->addInstruction(cz2);
 	//f->addInstruction(s);
 	f->addInstruction(m0);
-	f->addInstruction(m1);
+//	f->addInstruction(m1);
 	//f->addInstruction(cond1);
 	//f->addInstruction(cond2);
 
@@ -142,6 +146,7 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
 	std::stringstream ss;
 	circuit = visitor->getCircuit();
 	for(int i = 0; i < circuit.ops.size(); i++) {
+	  std::cout << "GateID = " << circuit.gateDic[circuit.ops[i].gate] << std::endl;
 	  //std::cout << circuit.gateDic[circuit.ops[i].gate].matrix.data.size() << std::endl;
 	  if(circuit.gateDic[circuit.ops[i].gate].arity == 2) {
 	    ss << circuit.ops[i].gate << " q[" << circuit.ops[i].qbits[0] << "],q[" << circuit.ops[i].qbits[1] << "]\n";
@@ -162,7 +167,7 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
 	    std::string result = circuit.ops[i].gate;
 	    EXPECT_TRUE(!result.compare(expect[i]));
 	    EXPECT_TRUE(circuit.ops[i].qbits[0] == expectb[i]);
-	    /*
+	    
             for(int j = 0; j < circuit.gateDic[circuit.ops[i].gate].matrix.data.size(); j++){
               ss << std::setprecision(3) << circuit.gateDic[circuit.ops[i].gate].matrix.data[j].re << "+" << circuit.gateDic[circuit.ops[i].gate].matrix.data[j].im << "i ";
               if(j == 1 || j == 3) {
@@ -170,7 +175,7 @@ TEST(ATOSVisitorTester,checkIRToATOS) {
               }
 	    }
 	    ss << std::endl;
-	    */
+	    
 	  }else{
 	    ss << circuit.ops[i].gate << " q[" << circuit.ops[i].qbits[0] << "] c[" << circuit.ops[i].cbits[0] << "]\n"; 
 	    std::string result = circuit.ops[i].gate;
