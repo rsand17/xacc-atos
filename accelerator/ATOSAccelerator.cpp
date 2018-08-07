@@ -1,4 +1,5 @@
 #include "ATOSAccelerator.hpp"
+#include <qat/core/circuit.h>
 #include <thrift/protocol/TBinaryProtocol.h>
 #include <thrift/transport/TSimpleFileTransport.h>
 #include <thrift/transport/TTransportUtils.h>
@@ -44,10 +45,11 @@ std::vector<std::shared_ptr<AcceleratorBuffer>> ATOSAccelerator::execute(
 
 void ATOSAccelerator::execute(std::shared_ptr<AcceleratorBuffer> buffer, const std::shared_ptr<xacc::Function> kernel) {
 
+	std::cout << "Executing KERNEL: " << kernel->name() << "\n";
 	auto visitor = std::make_shared<ATOSVisitor>();
 	datamodel::Circuit circuit;
 	
-	//std::cout << "Made Visitor" << std::endl;
+	std::cout << "Made Visitor" << std::endl;
 
 	InstructionIterator it(kernel);
 	while (it.hasNext()) {
@@ -57,10 +59,11 @@ void ATOSAccelerator::execute(std::shared_ptr<AcceleratorBuffer> buffer, const s
 		}
 	}
 
-	//std::cout << "Iterated over IR" << std::endl;
+	std::cout << "Iterated over IR" << std::endl;
 
 	circuit = visitor->getCircuit();
 	circuit.__set_nbqbits(buffer->size());
+	circuit.__set_nbcbits(buffer->size());
 	std::vector<qpu::Result> results;
 	task::Task task;
 	task.__set_circuit(circuit);
@@ -72,9 +75,11 @@ void ATOSAccelerator::execute(std::shared_ptr<AcceleratorBuffer> buffer, const s
         }
 
         options.__set_qbits(qbits);
-	options.__set_run_nb(1000);
+	options.__set_run_nb(10);
 
-	//std::cout << "Set qubits" << std::endl;
+	std::cout << "Circuit ops: " << circuit.ops << std::endl;
+	std::cout << "Circuit num qbits: " << circuit.nbqbits << std::endl;
+	std::cout << "Circuit num cbits: " << circuit.nbcbits << std::endl;
 
 	boost::shared_ptr<TTransport> socket(new TSocket("localhost", 21290));
         boost::shared_ptr<TTransport> transport(new TBufferedTransport(socket));
@@ -82,28 +87,35 @@ void ATOSAccelerator::execute(std::shared_ptr<AcceleratorBuffer> buffer, const s
 	qpu::FrontendClient qpu_client(protocol);
         transport->open();
 
-	//std::cout << "Did Transport Protocol stuff" << std::endl;
+	std::cout << "Did Transport Protocol stuff" << std::endl;
 	//qpu::FrontendClient qpu = qpu_client("localhost", 21290);
+
+	//write_circuit(circuit, "program_circ.circ");
 	
 	qpu_client.Execute(results, task, options);
 
-	//std::cout << results.size() << ", Called Execute" << std::endl;
-	int count = 0;
+	std::cout << "Called Execute" << std::endl;
 	for ( auto result : results) {
           std::cout << "####BEGIN####\n" << result << std::endl;
           std::string state = result.state;
-	  bool bitResult = std::bitset<8>(state.c_str()[0])[0];
-	  if(bitResult) {
-	    buffer->appendMeasurement("1");
+	  std::string bufferBits;
+	  for(int i = circuit.nbqbits - 1; i >= 0; i--) {
+	    bool bitResult = std::bitset<8>(state.c_str()[0])[i];
+	    if(bitResult) {
+	      bufferBits += "1";
+	    }
+	    else {
+	      bufferBits += "0";
+	    }
 	  }
-	  else {
-	    buffer->appendMeasurement("0");
-	  }
+	  buffer->appendMeasurement(bufferBits);
+	  std::cout << "ACCBUF: " << bufferBits << "\n"; //buffer->getMeasurementStrings() << std::endl;
           std::cout << "binary state [ qbit_"<< state.size() * 8 << ", qbit_" << 0 << "]: " << std::endl;
-	  std::cout << "ACCBUF: " << buffer->getMeasurementStrings()[count] << "\n";
-	  count++;
-          std:: cout << std::bitset<8>(state.c_str()[0])[0];
-          std::cout<< "\n####END####" << std::endl;
+          //for (std::size_t i = 0; i < state.size(); ++i)
+          //{
+            std:: cout << std::bitset<8>(state.c_str()[0]);
+          //}
+	  std::cout<< "\n####END####" << std::endl;
         }
 	
 	transport->close();

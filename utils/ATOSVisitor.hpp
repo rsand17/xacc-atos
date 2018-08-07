@@ -139,7 +139,7 @@ public:
 	  i.__set_matrix(mi);
           i.__set_arity(1);
           i.__set_name("I");
-          circuit.gateDic.insert({"I", i});
+          gateDictionary.insert({"I", i});
 	  
           GateDefinition x;
 	  std::vector<ComplexNumber> datax;
@@ -171,7 +171,7 @@ public:
 	  y.__set_matrix(my);
           y.__set_arity(1);
           y.__set_name("Y");
-          circuit.gateDic.insert({"Y", y});
+          gateDictionary.insert({"Y", y});
 
           GateDefinition z;
 	  std::vector<ComplexNumber> dataz;
@@ -188,7 +188,7 @@ public:
 	  z.__set_matrix(mz);
           z.__set_arity(1);
           z.__set_name("Z");
-          circuit.gateDic.insert({"Z", z});
+          gateDictionary.insert({"Z", z});
 
           GateDefinition s;
 	  std::vector<ComplexNumber> datas;
@@ -203,7 +203,7 @@ public:
 	  s.__set_matrix(ms);
           s.__set_arity(1);
           s.__set_name("S");
-          circuit.gateDic.insert({"S", s});
+          gateDictionary.insert({"S", s});
 /*
           Matrix tee;
           tee.nRows = 2;
@@ -247,7 +247,7 @@ public:
 	  cnot.__set_matrix(mcn);
           cnot.__set_arity(2);
           cnot.__set_name("CNOT");
-          circuit.gateDic.insert({"CNOT", cnot});
+          gateDictionary.insert({"CNOT", cnot});
 
 	  GateDefinition cz;
 	  std::vector<ComplexNumber> datacz;
@@ -279,7 +279,7 @@ public:
 	  cz.__set_matrix(mcz);
           cz.__set_arity(2);
           cz.__set_name("CSIGN");
-          circuit.gateDic.insert({"CSIGN", cz});
+          gateDictionary.insert({"CSIGN", cz});
 
 	  GateDefinition swap;
 	  std::vector<ComplexNumber> datasw;
@@ -309,7 +309,7 @@ public:
 	  swap.__set_matrix(msw);
           swap.__set_arity(2);
           swap.__set_name("SWAP");
-          circuit.gateDic.insert({"SWAP", swap});
+          gateDictionary.insert({"SWAP", swap});
 	  
 	  GateDefinition meas;
 	  meas.__set_arity(1);
@@ -451,8 +451,9 @@ public:
 	  mrx.__set_data(datarx);
 	  rotx.__set_matrix(mrx);
           rotx.__set_arity(1);
-          rotx.__set_name("Rx_" + angleStr);
-          circuit.gateDic.insert({"Rx_" + angleStr, rotx});
+          rotx.__set_name("RX[" + angleStr + "]");
+          gateDictionary.insert({"RX[" + angleStr + "]", rotx});
+	  circuit.__set_gateDic(gateDictionary);
 
           datamodel::Op op;
 	  std::vector<QbitId> qbitsrx;
@@ -482,8 +483,9 @@ public:
 	  mry.__set_data(datary);
 	  roty.__set_matrix(mry);
           roty.__set_arity(1);
-          roty.__set_name("Ry_" + angleStr);
-          circuit.gateDic.insert({"Ry_" + angleStr, roty});
+          roty.__set_name("RY[" + angleStr + "]");
+          gateDictionary.insert({"RY[" + angleStr + "]", roty});
+	  circuit.__set_gateDic(gateDictionary);
 
 	  datamodel::Op op;
           std::vector<QbitId> qbitsry;
@@ -514,8 +516,9 @@ public:
 	  mrz.__set_data(datarz);
 	  rotz.__set_matrix(mrz);
           rotz.__set_arity(1);
-          rotz.__set_name("Ry_" + angleStr);
-          circuit.gateDic.insert({"Rz_" + angleStr, rotz});
+          rotz.__set_name("RZ[" + angleStr + "]");
+          gateDictionary.insert({"RZ[" + angleStr + "]", rotz});
+	  circuit.__set_gateDic(gateDictionary);
 
           datamodel::Op op;
           std::vector<QbitId> qbitsrz;
