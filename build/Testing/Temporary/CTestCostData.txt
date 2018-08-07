@@ -1,4 +1,0 @@
-xacc_ATOSAcceleratorTester 0 0
-xacc_ATOSVisitorTester 1 0.0298731
----
-xacc_ATOSAcceleratorTester
