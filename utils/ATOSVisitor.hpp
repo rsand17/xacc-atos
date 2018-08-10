@@ -31,11 +31,6 @@
 #ifndef QUANTUM_GATE_ACCELERATORS_ATOS_ATOSVISITOR_HPP_
 #define QUANTUM_GATE_ACCELERATORS_ATOS_ATOSVISITOR_HPP_
 
-//#include <thrift/protocol/TBinaryProtocol.h>
-//#include <thrift/transport/TSimpleFileTransport.h>
-//#include <thrift/transport/TTransportUtils.h>
-//#include <thrift/transport/TSocket.h>
-
 //Internal header files for data description
 #include <datamodel_types.h>
 #include <task_types.h>
@@ -71,24 +66,6 @@ protected:
 
 	datamodel::Circuit circuit;
 	
-	//using GateDictionary = std::map<GateId, GateDefinition>;// GateDictionary;
-        //GateDictionary gateDictionary;
-        //circuit.gateDic = gateDictionary;
-
-	/**
-	 * Reference to the aQasm string
-	 * this visitor is trying to construct
-	 */
-	//std::string aQasmStr;
-
-	/**
-	 * Reference to the classical memory address indices
-	 * where measurements are recorded.
-	 */
-	//std::string classicalAddresses;
-
-	//std::map<int, int> qubitToClassicalBitIndex;
-
 	std::vector<int> measuredQubits;
 
 	int numAddresses;
@@ -98,6 +75,52 @@ protected:
 	GateDictionary gateDictionary;
 
 public:
+
+	/* Circuit data structure:
+
+	struct Circuit {
+	1: list<Op> ops,    // list of operations (the gate and  the parameters to apply it)
+	2: optional string name, // Name of the circuit (useless for now)
+	3: GateDictionary gateDic, // Definition of gates
+	4: i32 nbqbits,   // number of qbits
+	5: optional i32 nbcbits=0,  // number of classical bits
+	}
+ 
+	struct Op {
+	1: GateId gate,    // Name of the gate (it’s a string)
+	2: list<QbitId> qbits, // list of the qbits on which the gate is applied (interger in [0, nbqits[
+	3: optional OpType type=0, // Type of the gate the enum is below
+	4: optional list<CbitId> cbits, // list of classical bits
+	5: optional string formula // CNF Formula I have to check it
+	}
+	enum OpType { GATETYPE=0, // Quantum Gate
+	MEASURE=1, // measure list of the qbits and store them within the cbits
+	RESET=2, // put the qbits at the 0 value
+	CLASSIC=3, // store the result of the formula in the cbit
+	CLASSICCTRL=4, // apply the gate only if all cbits are at true
+	BREAK=5 // Check the Boolean formula providing as a string
+	}
+	 
+	struct GateDefinition {
+	1: string name, // Name of the gate
+	2: i32 arity, // number of qbits
+	3: Matrix matrix, // matrix of the gate
+	// Additional parameters are available but with those it’s enough to get it working.
+	}
+	 
+	struct Matrix {
+	1:i64 nRows,
+	2:i64 nCols,
+	3:list<ComplexNumber> data  // data filled by row
+	}
+	 
+	struct ComplexNumber {
+	1:double re,
+	2:double im=0
+	}
+ 
+	typedef map<GateId, GateDefinition> GateDictionary
+	*/
 
 	ATOSVisitor() {
           ComplexNumber comNum;
@@ -318,7 +341,6 @@ public:
 
 	  circuit.__set_gateDic(gateDictionary);
 	}
-	//add gateDic
 
 	/**
 	 * Visit hadamard gates
@@ -331,7 +353,6 @@ public:
 	  op.__set_qbits(qbitsh);
           ops.push_back(op);
 	  circuit.__set_ops(ops);
-	  //std::cout << "Thank you for visiting the hadamard gate!\nMatrix size: " << circuit.gateDic["H"].matrix.data.size() << std::endl;
 	}
 
 	void visit(Identity& i) {
@@ -530,10 +551,6 @@ public:
 	}
 
 	void visit(CPhase& cp) {
-	  //datamodel::Op op;
-          //op.gate = "S";
-          //op.qbits.push_back(cp.bits()[0]);
-          //circuit.ops.push_back(op);
 	}
 
 	void visit(Swap& s) {
@@ -551,7 +568,7 @@ public:
 		return;
 	}
 	/**
-	 * Return the quil string
+	 * Return the circuit
 	 */
 	datamodel::Circuit getCircuit() {
 		return circuit;
